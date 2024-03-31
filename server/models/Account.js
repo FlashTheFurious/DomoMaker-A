@@ -1,9 +1,7 @@
 /* This file defines our schema and model interface for the account data.
-
-   We first import bcrypt and mongoose into the file. bcrypt is an industry
+  We first import bcrypt and mongoose into the file. bcrypt is an industry
    standard tool for encrypting passwords. Mongoose is our tool for
-   interacting with our mongo database.
-*/
+   interacting with our mongo database. */
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
@@ -65,11 +63,9 @@ AccountSchema.statics.authenticate = async (username, password) => {
   const isMatch = await bcrypt.compare(password, doc.password);
   if (isMatch) {
     return doc;
-  } else {
-    throw new Error('Password is incorrect');
   }
+  throw new Error('Password is incorrect');
 };
-
 
 AccountModel = mongoose.model('Account', AccountSchema);
 module.exports = AccountModel;

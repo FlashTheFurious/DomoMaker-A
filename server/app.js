@@ -4,7 +4,7 @@ const compression = require('compression');
 const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-//I ran into errors with the newer version of handlebars and had to make the below change.
+// I ran into errors with the newer version of handlebars and had to make the below change.
 const { engine } = require('express-handlebars');
 
 const helmet = require('helmet');
@@ -14,13 +14,12 @@ const router = require('./router.js');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/DomoMaker';
 
-//Changed line to due deprecation of method
+// Changed line to due deprecation of method and removed console statements
 mongoose.connect(dbURI)
-  .then(() => console.log('Database connected successfully'))
-  .catch(err => console.error('Database connection error:', err));
+  .then()
+  .catch();
 
-
-const app = express()
+const app = express();
 app.use(helmet());
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
@@ -44,5 +43,5 @@ app.listen(port, (err) => {
   if (err) {
     throw err;
   }
-  console.log(`Listening on port ${port}`);
+  // console.log(`Listening on port ${port}`);
 });
