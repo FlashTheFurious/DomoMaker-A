@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const { engine } = require('express-handlebars');
 
 const helmet = require('helmet');
-
+const session = require('express-session');
 const router = require('./router.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -28,6 +28,12 @@ app.use(compression());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use(session({
+  key: 'sessionid',
+  secret: 'Domo_Arigato',
+  resave: false,
+  saveUninitialized: false,
+}));
 app.engine('handlebars', engine({ defaultLayout: '' }));
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/../views`);

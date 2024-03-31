@@ -10,13 +10,11 @@ const signupPage = (req, res) => {
   return res.render('signup');
 };
 
-const logout = (req, res) => {
-  return res.redirect('/');
-};
+
 
 const login = async (req, res) => {
-  const username = `${req.body.username}`;
-  const pass = `${req.body.pass}`;
+  const username = req.body.username;
+  const pass = req.body.pass;
 
   if (!username || !pass) {
     return res.status(400).json({ error: 'All fields are required' });
@@ -24,18 +22,19 @@ const login = async (req, res) => {
 
   try {
     const account = await Account.authenticate(username, pass);
-    
-    if (!account) {
-      return res.status(401).json({ error: 'Wrong username or password' });
-    }
-
-    // If login is successful
+    req.session.account = Account.toAPI(account);
     return res.json({ redirect: '/maker' });
   } catch (err) {
     console.log(err);
-    return res.status(401).json({ error: 'An error occurred' });
+    if (err.message === 'User not found' || err.message === 'Password is incorrect') {
+      return res.status(401).json({ error: 'Wrong username or password' });
+    } else {
+      return res.status(401).json({ error: 'An error occurred' });
+    }
   }
 };
+
+
 
 const signup = async (req, res) => {
   const username = `${req.body.username}`;
@@ -55,7 +54,8 @@ const signup = async (req, res) => {
     const newAccount = new Account({ username, password: hash });
 
     await newAccount.save();
-
+    req.session.account = Account.toAPI(newAccount);
+    
     return res.json({ redirect: '/maker' });
   } catch (err) {
     console.log(err);
@@ -66,6 +66,11 @@ const signup = async (req, res) => {
 
     return res.status(500).json({ error: 'An error occurred' });
   }
+};
+
+const logout = (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
 };
 
 module.exports = {

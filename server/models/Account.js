@@ -55,22 +55,21 @@ AccountSchema.statics.generateHash = (password) => bcrypt.hash(password, saltRou
    and hashed password to bcrypt's compare function. The compare function hashes the
    given password the same number of times as the stored password and compares the result.
 */
-AccountSchema.statics.authenticate = async (username, password, callback) => {
-  try {
-    const doc = await AccountModel.findOne({username}).exec();
-    if(!doc) {
-      return callback();
-    }
 
-    const match = await bcrypt.compare(password, doc.password);
-    if (match) {
-      return callback(null, doc);
-    }
-    return callback();
-  } catch (err) {
-    return callback(err);
+AccountSchema.statics.authenticate = async (username, password) => {
+  const doc = await AccountModel.findOne({ username }).exec();
+  if (!doc) {
+    throw new Error('User not found');
+  }
+
+  const isMatch = await bcrypt.compare(password, doc.password);
+  if (isMatch) {
+    return doc;
+  } else {
+    throw new Error('Password is incorrect');
   }
 };
+
 
 AccountModel = mongoose.model('Account', AccountSchema);
 module.exports = AccountModel;
