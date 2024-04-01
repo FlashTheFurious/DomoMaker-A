@@ -1,13 +1,17 @@
-
 const controllers = require('./controllers');
 const mid = require('./middleware');
 
-const router = (app) => {
-  app.get('/login', mid.requireSecure, mid.requiresLogout, controllers.Account.loginPage);
-  app.post('/login', mid.requireSecure, mid.requiresLogout, controllers.Account.login);
+// Debugging
+// console.log('requiresSecure:', typeof mid.requiresSecure); 
+// console.log('requiresLogout:', typeof mid.requiresLogout); 
+// console.log('Account loginPage:', typeof controllers.Account.loginPage); 
 
-  app.get('/signup', mid.requireSecure, mid.requiresLogout, controllers.Account.signupPage);
-  app.post('/signup', mid.requireSecure, mid.requiresLogout, controllers.Account.signup);
+const router = (app) => {
+  app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
+  app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
+
+  app.get('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signupPage);
+  app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
 
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
 
